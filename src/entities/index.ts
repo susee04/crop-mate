@@ -23,26 +23,6 @@ export interface ChatHistory {
   timestamp?: Date | string;
 }
 
-/**
- * Collection ID: chathistory
- * Interface for ChatHistory
- */
-export interface ChatHistory {
-  _id: string;
-  _createdDate?: Date;
-  _updatedDate?: Date;
-  /** @wixFieldType text */
-  conversationId?: string;
-  /** @wixFieldType text */
-  userId?: string;
-  /** @wixFieldType text */
-  userMessage?: string;
-  /** @wixFieldType text */
-  aiResponse?: string;
-  /** @wixFieldType datetime */
-  timestamp?: Date | string;
-}
-
 
 /**
  * Collection ID: cropdiseases

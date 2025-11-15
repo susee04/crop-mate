@@ -164,13 +164,20 @@ const HomePage = () => {
                   </Button>
                 </div>
               ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={actions.login}
-                >
-                  Sign In
-                </Button>
+                <div className="flex items-center space-x-2">
+                  <Link to="/login">
+                    <Button variant="outline" size="sm">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={actions.login}
+                  >
+                    Get Started
+                  </Button>
+                </div>
               )}
             </div>
           </div>
@@ -178,10 +185,10 @@ const HomePage = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="h-screen grid place-items-center p-8 relative overflow-hidden">
+      <section className="min-h-screen flex flex-col justify-center items-center p-8 relative overflow-hidden">
         <motion.div 
           style={{ y }}
-          className="text-center z-10"
+          className="text-center z-10 max-w-6xl mx-auto"
         >
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -192,8 +199,8 @@ const HomePage = () => {
             <Image
               src="https://static.wixstatic.com/media/7cdd40_0e78ff9a700c4e04a491df78c54b26c1~mv2.png?originWidth=768&originHeight=576"
               alt="Farm illustration with crops and farmers"
-              className="w-full max-w-4xl mx-auto mb-8"
-              width={800}
+              className="w-full max-w-3xl mx-auto mb-8 h-auto"
+              width={600}
             />
           </motion.div>
           
@@ -201,7 +208,7 @@ const HomePage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-7xl font-heading font-bold text-center text-dark-green mb-4"
+            className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-center text-dark-green mb-6"
           >
             {t('heroTitle')}
           </motion.h1>
@@ -210,7 +217,7 @@ const HomePage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl font-paragraph text-center text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto"
+            className="text-lg md:text-xl font-paragraph text-center text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto"
           >
             {t('heroSubtitle')}
           </motion.p>
@@ -219,6 +226,7 @@ const HomePage = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
+            className="mb-8"
           >
             <motion.button
               whileHover={{ scale: 1.1 }}

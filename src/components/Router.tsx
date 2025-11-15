@@ -4,6 +4,7 @@ import { ScrollToTop } from '@/lib/scroll-to-top';
 import { MemberProtectedRoute } from '@/components/ui/member-protected-route';
 import ErrorPage from '@/integrations/errorHandlers/ErrorPage';
 import HomePage from '@/components/pages/HomePage';
+import LoginPage from '@/components/pages/LoginPage';
 import CropsPage from '@/components/pages/CropsPage';
 import PestsPage from '@/components/pages/PestsPage';
 import SoilPage from '@/components/pages/SoilPage';
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: "login",
+        element: <LoginPage />,
       },
       {
         path: "crops",

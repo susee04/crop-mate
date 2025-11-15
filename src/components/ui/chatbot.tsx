@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Bot, User, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Loader2, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -28,11 +28,12 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId] = useState(() => `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [isListeningInChat, setIsListeningInChat] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { member, isAuthenticated } = useMember();
   const { t } = useLanguageStore();
-  const { speak } = useSpeechStore();
+  const { speak, isListening, startListening, stopListening, isSpeaking, toggleSpeaking } = useSpeechStore();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -47,6 +48,33 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
       loadChatHistory();
     }
   }, [isOpen, isAuthenticated, member]);
+
+  // Handle speech recognition results
+  useEffect(() => {
+    if (isListeningInChat && !isListening) {
+      // Speech recognition ended, check if we got any text
+      setIsListeningInChat(false);
+    }
+  }, [isListening, isListeningInChat]);
+
+  // Handle transcript updates from speech store
+  const { transcript } = useSpeechStore();
+  useEffect(() => {
+    if (isListeningInChat && transcript.trim()) {
+      setInputValue(transcript);
+      setIsListeningInChat(false);
+    }
+  }, [transcript, isListeningInChat]);
+
+  const handleVoiceInput = () => {
+    if (isListening) {
+      stopListening();
+      setIsListeningInChat(false);
+    } else {
+      setIsListeningInChat(true);
+      startListening();
+    }
+  };
 
   const loadChatHistory = async () => {
     if (!member?._id) return;
@@ -312,18 +340,35 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
 
               {/* Input */}
               <div className="p-4 border-t">
+                <div className="flex space-x-2 mb-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleVoiceInput}
+                    className={`${isListeningInChat ? 'bg-destructive text-destructive-foreground' : ''}`}
+                  >
+                    {isListeningInChat ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleSpeaking}
+                  >
+                    {isSpeaking ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                  </Button>
+                </div>
                 <div className="flex space-x-2">
                   <Input
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Ask me about farming..."
-                    disabled={isLoading}
+                    placeholder={isListeningInChat ? "Listening..." : "Ask me about farming..."}
+                    disabled={isLoading || isListeningInChat}
                     className="flex-1"
                   />
                   <Button
                     onClick={handleSendMessage}
-                    disabled={!inputValue.trim() || isLoading}
+                    disabled={!inputValue.trim() || isLoading || isListeningInChat}
                     size="sm"
                   >
                     <Send className="h-4 w-4" />
