@@ -71,6 +71,13 @@ const translations = {
     signIn: 'Sign In',
     signOut: 'Sign Out',
     
+    // Chat
+    chatHistory: 'Chat History',
+    startChatting: 'Start Chatting',
+    totalConversations: 'Total Conversations',
+    todaysChats: "Today's Chats",
+    daysActive: 'Days Active',
+    
     // Common
     back: 'Back',
     noCropsFound: 'No crops found',
@@ -209,6 +216,13 @@ const translations = {
     signIn: 'உள்நுழைய',
     signOut: 'வெளியேறு',
     
+    // Chat
+    chatHistory: 'அரட்டை வரலாறு',
+    startChatting: 'அரட்டை தொடங்கு',
+    totalConversations: 'மொத்த உரையாடல்கள்',
+    todaysChats: 'இன்றைய அரட்டைகள்',
+    daysActive: 'செயல்பாட்டு நாட்கள்',
+    
     // Common
     loading: 'ஏற்றுகிறது...',
     error: 'பிழை',
@@ -341,6 +355,13 @@ const translations = {
     signIn: 'సైన్ ఇన్',
     signOut: 'సైన్ అవుట్',
     
+    // Chat
+    chatHistory: 'చాట్ చరిత్ర',
+    startChatting: 'చాట్ ప్రారంభించండి',
+    totalConversations: 'మొత్తం సంభాషణలు',
+    todaysChats: 'నేటి చాట్‌లు',
+    daysActive: 'క్రియాశీల దినాలు',
+    
     loading: 'లోడ్ అవుతోంది...',
     error: 'లోపం',
     retry: 'మళ్లీ ప్రయత్నించండి',
@@ -471,6 +492,13 @@ const translations = {
     settings: 'सेटिंग्स',
     signIn: 'साइन इन',
     signOut: 'साइन आउट',
+    
+    // Chat
+    chatHistory: 'चैट इतिहास',
+    startChatting: 'चैट शुरू करें',
+    totalConversations: 'कुल बातचीत',
+    todaysChats: 'आज की चैट',
+    daysActive: 'सक्रिय दिन',
     
     // Common
     loading: 'लोड हो रहा है...',

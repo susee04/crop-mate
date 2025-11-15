@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useTransform, useViewportScroll } from 'framer-motion';
-import { Mic, MicOff, Volume2, VolumeX, Sun, Moon, MapPin, Thermometer, Droplets, Wind } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, Sun, Moon, MapPin, Thermometer, Droplets, Wind, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Image } from '@/components/ui/image';
 import { Link } from 'react-router-dom';
+import { Chatbot } from '@/components/ui/chatbot';
+import { useMember } from '@/integrations';
 import { useLanguageStore } from '@/stores/languageStore';
 import { useThemeStore } from '@/stores/themeStore';
 import { useSpeechStore } from '@/stores/speechStore';
@@ -13,6 +15,7 @@ const HomePage = () => {
   const { scrollY } = useViewportScroll();
   const y = useTransform(scrollY, [0, 300], [0, -50]);
   
+  const { member, isAuthenticated, actions } = useMember();
   const { currentLanguage, setLanguage, t } = useLanguageStore();
   const { isDarkMode, toggleTheme } = useThemeStore();
   const { isListening, isSpeaking, startListening, stopListening, toggleSpeaking } = useSpeechStore();
@@ -142,6 +145,33 @@ const HomePage = () => {
               >
                 {isSpeaking ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
               </Button>
+              
+              {/* Authentication */}
+              {isAuthenticated ? (
+                <div className="flex items-center space-x-2">
+                  <Link to="/profile">
+                    <Button variant="outline" size="sm">
+                      <User className="h-4 w-4 mr-2" />
+                      {member?.profile?.nickname || member?.contact?.firstName || 'Profile'}
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={actions.logout}
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={actions.login}
+                >
+                  Sign In
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -399,6 +429,9 @@ const HomePage = () => {
           </div>
         </div>
       </footer>
+
+      {/* Chatbot */}
+      <Chatbot />
     </div>
   );
 };

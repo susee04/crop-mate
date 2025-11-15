@@ -1,6 +1,7 @@
 import { MemberProvider } from '@/integrations';
 import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom';
 import { ScrollToTop } from '@/lib/scroll-to-top';
+import { MemberProtectedRoute } from '@/components/ui/member-protected-route';
 import ErrorPage from '@/integrations/errorHandlers/ErrorPage';
 import HomePage from '@/components/pages/HomePage';
 import CropsPage from '@/components/pages/CropsPage';
@@ -12,6 +13,7 @@ import MarketPage from '@/components/pages/MarketPage';
 import PesticidesPage from '@/components/pages/PesticidesPage';
 import WaterPage from '@/components/pages/WaterPage';
 import DiseaseDetectionPage from '@/components/pages/DiseaseDetectionPage';
+import ProfilePage from '@/components/pages/ProfilePage';
 
 // Layout component that includes ScrollToTop
 function Layout() {
@@ -68,6 +70,14 @@ const router = createBrowserRouter([
       {
         path: "disease-detection",
         element: <DiseaseDetectionPage />,
+      },
+      {
+        path: "profile",
+        element: (
+          <MemberProtectedRoute messageToSignIn="Sign in to access your profile">
+            <ProfilePage />
+          </MemberProtectedRoute>
+        ),
       },
       {
         path: "*",
