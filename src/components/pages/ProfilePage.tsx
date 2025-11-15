@@ -21,18 +21,19 @@ const ProfilePage = () => {
   const { isDarkMode } = useThemeStore();
 
   useEffect(() => {
-    if (member?._id) {
+    if ((member as any)?._id) {
       loadUserChatHistory();
     }
   }, [member]);
 
   const loadUserChatHistory = async () => {
-    if (!member?._id) return;
+    const memberId = (member as any)?._id;
+    if (!memberId) return;
     
     try {
       const { items } = await BaseCrudService.getAll<ChatHistory>('chathistory');
       const userChats = items
-        .filter(chat => chat.userId === member._id)
+        .filter(chat => chat.userId === memberId)
         .sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime());
       
       setChatHistory(userChats);

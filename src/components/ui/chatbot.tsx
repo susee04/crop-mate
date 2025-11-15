@@ -29,11 +29,13 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId] = useState(() => `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [isListeningInChat, setIsListeningInChat] = useState(false);
+  const [spokenText, setSpokenText] = useState('');
+  const [showSpokenText, setShowSpokenText] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { member, isAuthenticated } = useMember();
   const { t } = useLanguageStore();
-  const { speak, isListening, startListening, stopListening, isSpeaking, toggleSpeaking } = useSpeechStore();
+  const { speak, isListening, startListening, stopListening, isSpeaking, toggleSpeaking, transcript } = useSpeechStore();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -54,15 +56,18 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
     if (isListeningInChat && !isListening) {
       // Speech recognition ended, check if we got any text
       setIsListeningInChat(false);
+      if (spokenText.trim()) {
+        setShowSpokenText(true);
+        setTimeout(() => setShowSpokenText(false), 3000); // Hide after 3 seconds
+      }
     }
-  }, [isListening, isListeningInChat]);
+  }, [isListening, isListeningInChat, spokenText]);
 
   // Handle transcript updates from speech store
-  const { transcript } = useSpeechStore();
   useEffect(() => {
     if (isListeningInChat && transcript.trim()) {
+      setSpokenText(transcript);
       setInputValue(transcript);
-      setIsListeningInChat(false);
     }
   }, [transcript, isListeningInChat]);
 
@@ -71,18 +76,21 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
       stopListening();
       setIsListeningInChat(false);
     } else {
+      setSpokenText('');
+      setShowSpokenText(false);
       setIsListeningInChat(true);
       startListening();
     }
   };
 
   const loadChatHistory = async () => {
-    if (!member?._id) return;
+    const memberId = (member as any)?._id;
+    if (!memberId) return;
     
     try {
       const { items } = await BaseCrudService.getAll<ChatHistory>('chathistory');
       const userChats = items
-        .filter(chat => chat.userId === member._id)
+        .filter(chat => chat.userId === memberId)
         .sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime())
         .slice(-10); // Load last 10 messages
 
@@ -160,13 +168,14 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
   };
 
   const saveChatToHistory = async (userMessage: string, aiResponse: string) => {
-    if (!isAuthenticated || !member?._id) return;
+    const memberId = (member as any)?._id;
+    if (!isAuthenticated || !memberId) return;
 
     try {
       await BaseCrudService.create('chathistory', {
         _id: crypto.randomUUID(),
         conversationId,
-        userId: member._id,
+        userId: memberId,
         userMessage,
         aiResponse,
         timestamp: new Date().toISOString()
@@ -181,6 +190,8 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
 
     const userMessage = inputValue.trim();
     setInputValue('');
+    setSpokenText('');
+    setShowSpokenText(false);
 
     // Add user message
     const userMsg: Message = {
@@ -207,7 +218,9 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
       setMessages(prev => [...prev, aiMsg]);
 
       // Speak the AI response if speech is enabled
-      speak(aiResponse);
+      if (isSpeaking) {
+        speak(aiResponse);
+      }
 
       // Save to database if user is authenticated
       if (isAuthenticated) {
@@ -340,23 +353,105 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
 
               {/* Input */}
               <div className="p-4 border-t">
-                <div className="flex space-x-2 mb-2">
+                {/* Voice Controls */}
+                <div className="flex space-x-2 mb-3">
                   <Button
-                    variant="outline"
+                    variant={isListeningInChat ? "destructive" : "outline"}
                     size="sm"
                     onClick={handleVoiceInput}
-                    className={`${isListeningInChat ? 'bg-destructive text-destructive-foreground' : ''}`}
+                    className={`relative transition-all duration-300 ${
+                      isListeningInChat 
+                        ? 'bg-destructive text-destructive-foreground shadow-lg animate-pulse' 
+                        : 'hover:bg-primary hover:text-primary-foreground'
+                    }`}
                   >
-                    {isListeningInChat ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                    {isListeningInChat ? (
+                      <>
+                        <MicOff className="h-4 w-4 mr-2" />
+                        <span className="text-xs font-medium">Recording...</span>
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
+                      </>
+                    ) : (
+                      <>
+                        <Mic className="h-4 w-4 mr-2" />
+                        <span className="text-xs font-medium">Voice</span>
+                      </>
+                    )}
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={toggleSpeaking}
+                    className={`transition-all duration-300 ${
+                      isSpeaking 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'hover:bg-secondary hover:text-secondary-foreground'
+                    }`}
                   >
-                    {isSpeaking ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                    {isSpeaking ? (
+                      <>
+                        <Volume2 className="h-4 w-4 mr-2" />
+                        <span className="text-xs font-medium">Audio On</span>
+                      </>
+                    ) : (
+                      <>
+                        <VolumeX className="h-4 w-4 mr-2" />
+                        <span className="text-xs font-medium">Audio Off</span>
+                      </>
+                    )}
                   </Button>
                 </div>
+
+                {/* Spoken Text Display */}
+                <AnimatePresence>
+                  {(showSpokenText || isListeningInChat) && spokenText && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, height: 0 }}
+                      animate={{ opacity: 1, y: 0, height: 'auto' }}
+                      exit={{ opacity: 0, y: -10, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg"
+                    >
+                      <div className="flex items-start space-x-2">
+                        <Mic className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1">
+                          <p className="text-xs font-medium text-blue-800 dark:text-blue-300 mb-1">
+                            {isListeningInChat ? "You're saying:" : "You said:"}
+                          </p>
+                          <p className="text-sm font-paragraph text-blue-900 dark:text-blue-100">
+                            "{spokenText}"
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Listening Indicator */}
+                <AnimatePresence>
+                  {isListeningInChat && !spokenText && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, height: 0 }}
+                      animate={{ opacity: 1, y: 0, height: 'auto' }}
+                      exit={{ opacity: 0, y: -10, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="mb-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        </div>
+                        <p className="text-sm font-paragraph text-red-800 dark:text-red-200">
+                          Listening... Speak now
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Text Input */}
                 <div className="flex space-x-2">
                   <Input
                     value={inputValue}
@@ -370,6 +465,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                     onClick={handleSendMessage}
                     disabled={!inputValue.trim() || isLoading || isListeningInChat}
                     size="sm"
+                    className="bg-primary hover:bg-primary/90"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
