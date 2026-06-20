@@ -199,14 +199,14 @@ const DiseaseDetectionPage = () => {
                 >
                   <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-lg font-paragraph text-gray-600 dark:text-gray-300 mb-2">
-                    Drag and drop your image here
+                    {t('uploadToStartDetection')}
                   </p>
                   <p className="text-sm font-paragraph text-gray-500 dark:text-gray-400 mb-4">
-                    or click to select a file
+                    {t('orClickToSelect')}
                   </p>
                   <Button variant="outline">
                     <Camera className="h-4 w-4 mr-2" />
-                    Select Image
+                    {t('selectImage')}
                   </Button>
                   
                   <input
@@ -260,7 +260,7 @@ const DiseaseDetectionPage = () => {
                 <div className="text-center mt-4">
                   <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
                   <p className="font-paragraph text-gray-600 dark:text-gray-300">
-                    Analyzing image... This may take a few moments.
+                    {t('analyzingImage')}
                   </p>
                 </div>
               )}
@@ -269,24 +269,24 @@ const DiseaseDetectionPage = () => {
             {/* Instructions */}
             <Card className="p-6 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
               <h3 className="text-lg font-heading font-semibold mb-3 text-blue-800 dark:text-blue-200">
-                Tips for Better Detection
+                {t('tipsForDetection')}
               </h3>
               <ul className="space-y-2 font-paragraph text-blue-700 dark:text-blue-300">
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  Take clear, well-lit photos of affected plant parts
+                  {t('tip1')}
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  Focus on leaves, stems, or fruits showing symptoms
+                  {t('tip2')}
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  Avoid blurry or distant images
+                  {t('tip3')}
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  Include multiple angles if possible
+                  {t('tip4')}
                 </li>
               </ul>
             </Card>
@@ -303,10 +303,10 @@ const DiseaseDetectionPage = () => {
                 <Card className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-heading font-semibold text-primary">
-                      Detection Results
+                      {t('detectionResults')}
                     </h2>
                     <div className={`px-3 py-1 rounded-full text-sm font-semibold ${getSeverityColor(detectionResult.severity)}`}>
-                      {detectionResult.severity.toUpperCase()} SEVERITY
+                      {t(detectionResult.severity.toLowerCase()).toUpperCase()} {t('severity').toUpperCase()}
                     </div>
                   </div>
                   
@@ -315,7 +315,7 @@ const DiseaseDetectionPage = () => {
                       {detectionResult.diseaseName}
                     </h3>
                     <p className="text-sm font-paragraph text-gray-600 dark:text-gray-300">
-                      Confidence: {detectionResult.confidence}%
+                      {t('confidence')}: {detectionResult.confidence}%
                     </p>
                   </div>
                   
@@ -364,7 +364,7 @@ const DiseaseDetectionPage = () => {
                     
                     <div>
                       <h4 className="text-lg font-heading font-semibold mb-3 text-primary">
-                        Prevention Tips
+                        {t('preventionTips')}
                       </h4>
                       <ul className="space-y-2">
                         {detectionResult.preventionTips.map((tip, index) => (
@@ -380,10 +380,10 @@ const DiseaseDetectionPage = () => {
                   <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                     <div className="flex space-x-3">
                       <Button className="flex-1">
-                        Get Expert Consultation
+                        {t('getExpertConsultation')}
                       </Button>
                       <Button variant="outline" className="flex-1">
-                        Save Results
+                        {t('saveResults')}
                       </Button>
                     </div>
                   </div>
@@ -395,10 +395,10 @@ const DiseaseDetectionPage = () => {
               <Card className="p-8 text-center">
                 <div className="text-6xl mb-4">🔬</div>
                 <h3 className="text-xl font-heading font-semibold mb-2">
-                  Ready to Analyze
+                  {t('readyToAnalyze')}
                 </h3>
                 <p className="font-paragraph text-gray-600 dark:text-gray-300">
-                  Upload an image of your crop to get started with disease detection
+                  {t('uploadToStartDetection')}
                 </p>
               </Card>
             )}
@@ -412,7 +412,7 @@ const DiseaseDetectionPage = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-12"
         >
-          <h2 className="text-2xl font-heading font-semibold mb-6">Common Crop Diseases</h2>
+          <h2 className="text-2xl font-heading font-semibold mb-6">{t('commonCropDiseases')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { name: 'Late Blight', crop: 'Tomato', severity: 'High', image: 'https://static.wixstatic.com/media/7cdd40_8a6c4fdaff62493ba0d2f2f6a2f3abe0~mv2.png?originWidth=256&originHeight=192' },
@@ -431,10 +431,10 @@ const DiseaseDetectionPage = () => {
                 />
                 <h3 className="font-heading font-semibold text-primary mb-1">{disease.name}</h3>
                 <p className="text-sm font-paragraph text-gray-600 dark:text-gray-300 mb-2">
-                  Affects: {disease.crop}
+                  {t('affects')}: {disease.crop}
                 </p>
                 <div className={`inline-block px-2 py-1 rounded text-xs font-semibold ${getSeverityColor(disease.severity.toLowerCase())}`}>
-                  {disease.severity} Risk
+                  {t(disease.severity.toLowerCase())} {t('risk')}
                 </div>
               </Card>
             ))}

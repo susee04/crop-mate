@@ -128,43 +128,43 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
     const lowerMessage = userMessage.toLowerCase();
     
     if (lowerMessage.includes('crop') || lowerMessage.includes('plant')) {
-      return `Based on your question about crops, I recommend checking our crops section for detailed information about planting, care, and harvesting. For specific crop advice, consider factors like your soil type, climate, and local conditions. Would you like me to help you with a particular crop?`;
+      return t('aiResponseCrop');
     }
     
     if (lowerMessage.includes('pest') || lowerMessage.includes('insect') || lowerMessage.includes('bug')) {
-      return `For pest management, it's important to first identify the specific pest affecting your crops. I can help you with both organic and chemical treatment options. Check our pests section for detailed identification guides and treatment methods. What type of crop are you dealing with?`;
+      return t('aiResponsePest');
     }
     
     if (lowerMessage.includes('soil') || lowerMessage.includes('fertilizer')) {
-      return `Soil health is crucial for successful farming. Different soil types require different management approaches. I recommend testing your soil pH and nutrient levels first. Our soil section has comprehensive information about soil types and improvement methods. What's your current soil condition?`;
+      return t('aiResponseSoil');
     }
     
     if (lowerMessage.includes('weather') || lowerMessage.includes('rain') || lowerMessage.includes('climate')) {
-      return `Weather plays a vital role in farming decisions. I can provide current weather information and agricultural insights. For irrigation planning, consider both current conditions and forecasts. Check our weather section for detailed agricultural weather guidance.`;
+      return t('aiResponseWeather');
     }
     
     if (lowerMessage.includes('market') || lowerMessage.includes('price') || lowerMessage.includes('sell')) {
-      return `Market prices fluctuate based on demand, season, and quality. I can help you analyze current market trends and suggest optimal selling times. Our market section provides real-time price information and demand analysis. Which crop are you planning to sell?`;
+      return t('aiResponseMarket');
     }
     
     if (lowerMessage.includes('disease') || lowerMessage.includes('sick') || lowerMessage.includes('problem')) {
-      return `Plant diseases can significantly impact your harvest. Early detection is key. You can use our disease detection feature to upload photos of affected plants for AI analysis. I can also provide information about common diseases and their treatments. What symptoms are you observing?`;
+      return t('aiResponseDisease');
     }
     
     if (lowerMessage.includes('water') || lowerMessage.includes('irrigation')) {
-      return `Efficient water management is essential for sustainable farming. I can suggest irrigation techniques based on your crop type and local conditions. Our water management section covers various irrigation methods and conservation tips. What's your current irrigation setup?`;
+      return t('aiResponseWater');
     }
     
     if (lowerMessage.includes('government') || lowerMessage.includes('scheme') || lowerMessage.includes('loan')) {
-      return `There are various government schemes available for farmers including subsidies, loans, and insurance programs. I can help you find schemes you're eligible for. Our schemes section has detailed information about application processes and benefits. What type of support are you looking for?`;
+      return t('aiResponseScheme');
     }
     
     if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('namaste')) {
-      return `Hello! I'm your AI farming assistant. I can help you with crops, pests, soil management, weather information, market prices, government schemes, and much more. What farming question can I help you with today?`;
+      return t('aiResponseGreeting');
     }
     
     // Default response
-    return `Thank you for your question! I'm here to help with all your farming needs. I can provide information about crops, pest management, soil health, weather conditions, market prices, government schemes, and more. Could you please be more specific about what you'd like to know? You can also explore our different sections for detailed information.`;
+    return t('aiResponseDefault');
   };
 
   const saveChatToHistory = async (userMessage: string, aiResponse: string) => {
@@ -231,7 +231,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
       const errorMsg: Message = {
         id: `error_${Date.now()}`,
         type: 'ai',
-        content: 'Sorry, I encountered an error. Please try again.',
+        content: t('aiResponseError'),
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMsg]);
@@ -283,8 +283,8 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                       <Bot className="h-8 w-8 mx-auto mb-2 text-primary" />
                       <p className="text-sm font-paragraph">
                         {isAuthenticated 
-                          ? "Hello! Ask me anything about farming."
-                          : "Sign in to save your chat history."
+                          ? t('chatbotGreeting')
+                          : t('signInToSaveHistory')
                         }
                       </p>
                     </div>
@@ -341,7 +341,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
                           <div className="flex items-center space-x-2">
                             <Loader2 className="h-4 w-4 animate-spin" />
-                            <p className="text-sm font-paragraph">Thinking...</p>
+                            <p className="text-sm font-paragraph">{t('thinking')}</p>
                           </div>
                         </div>
                       </div>
@@ -368,13 +368,13 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                     {isListeningInChat ? (
                       <>
                         <MicOff className="h-4 w-4 mr-2" />
-                        <span className="text-xs font-medium">Recording...</span>
+                        <span className="text-xs font-medium">{t('recording')}</span>
                         <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
                       </>
                     ) : (
                       <>
                         <Mic className="h-4 w-4 mr-2" />
-                        <span className="text-xs font-medium">Voice</span>
+                        <span className="text-xs font-medium">{t('voice')}</span>
                       </>
                     )}
                   </Button>
@@ -391,12 +391,12 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                     {isSpeaking ? (
                       <>
                         <Volume2 className="h-4 w-4 mr-2" />
-                        <span className="text-xs font-medium">Audio On</span>
+                        <span className="text-xs font-medium">{t('audioOn')}</span>
                       </>
                     ) : (
                       <>
                         <VolumeX className="h-4 w-4 mr-2" />
-                        <span className="text-xs font-medium">Audio Off</span>
+                        <span className="text-xs font-medium">{t('audioOff')}</span>
                       </>
                     )}
                   </Button>
@@ -416,7 +416,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                         <Mic className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                         <div className="flex-1">
                           <p className="text-xs font-medium text-blue-800 dark:text-blue-300 mb-1">
-                            {isListeningInChat ? "You're saying:" : "You said:"}
+                            {isListeningInChat ? t('youAreSaying') : t('youSaid')}
                           </p>
                           <p className="text-sm font-paragraph text-blue-900 dark:text-blue-100">
                             "{spokenText}"
@@ -444,7 +444,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                           <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                         </div>
                         <p className="text-sm font-paragraph text-red-800 dark:text-red-200">
-                          Listening... Speak now
+                          {t('listeningSpeakNow')}
                         </p>
                       </div>
                     </motion.div>
@@ -457,7 +457,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder={isListeningInChat ? "Listening..." : "Ask me about farming..."}
+                    placeholder={isListeningInChat ? t('listening') : t('chatbotPlaceholder')}
                     disabled={isLoading || isListeningInChat}
                     className="flex-1"
                   />
