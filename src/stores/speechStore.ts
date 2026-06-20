@@ -1,4 +1,12 @@
 import { create } from 'zustand';
+import { useLanguageStore } from './languageStore';
+
+const languageMap: Record<string, string> = {
+  en: 'en-US',
+  ta: 'ta-IN',
+  te: 'te-IN',
+  hi: 'hi-IN',
+};
 
 interface SpeechStore {
   isListening: boolean;
@@ -23,7 +31,9 @@ export const useSpeechStore = create<SpeechStore>((set, get) => ({
       
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = 'en-US'; // This should be dynamic based on selected language
+
+      const currentLanguage = useLanguageStore.getState().currentLanguage;
+      recognition.lang = languageMap[currentLanguage] || 'en-US';
       
       recognition.onstart = () => {
         set({ isListening: true });
@@ -70,9 +80,8 @@ export const useSpeechStore = create<SpeechStore>((set, get) => ({
       utterance.pitch = 1;
       utterance.volume = 1;
       
-      // Set language based on current language selection
-      // This should be dynamic based on selected language
-      utterance.lang = 'en-US';
+      const currentLanguage = useLanguageStore.getState().currentLanguage;
+      utterance.lang = languageMap[currentLanguage] || 'en-US';
       
       speechSynthesis.speak(utterance);
     }
