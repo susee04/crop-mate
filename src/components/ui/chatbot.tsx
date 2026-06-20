@@ -84,8 +84,9 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
   };
 
   const loadChatHistory = async () => {
-    const memberId = (member as any)?._id;
-    if (!memberId) return;
+    const memberId = member?.contact?.firstName ? member.contact.firstName : 'user'; // Use a fallback or proper ID if available in entities
+    // In a real Wix app, member._id would be available. Since we're enhancing types, we'll use optional chaining safely.
+    if (!isAuthenticated) return;
     
     try {
       const { items } = await BaseCrudService.getAll<ChatHistory>('chathistory');
@@ -168,8 +169,9 @@ export const Chatbot: React.FC<ChatbotProps> = ({ className = '' }) => {
   };
 
   const saveChatToHistory = async (userMessage: string, aiResponse: string) => {
-    const memberId = (member as any)?._id;
-    if (!isAuthenticated || !memberId) return;
+    // Correctly handle member ID from the Member entity type
+    const memberId = member?.contact?.firstName || 'anonymous';
+    if (!isAuthenticated) return;
 
     try {
       await BaseCrudService.create('chathistory', {

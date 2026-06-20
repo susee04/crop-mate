@@ -1,24 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, useTransform, useViewportScroll } from 'framer-motion';
-import { Mic, MicOff, Volume2, VolumeX, Sun, Moon, MapPin, Thermometer, Droplets, Wind, User } from 'lucide-react';
+import { Mic, MicOff, MapPin, Thermometer, Droplets, Wind } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Image } from '@/components/ui/image';
 import { Link } from 'react-router-dom';
-import { Chatbot } from '@/components/ui/chatbot';
-import { useMember } from '@/integrations';
 import { useLanguageStore } from '@/stores/languageStore';
-import { useThemeStore } from '@/stores/themeStore';
 import { useSpeechStore } from '@/stores/speechStore';
 
 const HomePage = () => {
   const { scrollY } = useViewportScroll();
   const y = useTransform(scrollY, [0, 300], [0, -50]);
   
-  const { member, isAuthenticated, actions } = useMember();
-  const { currentLanguage, setLanguage, t } = useLanguageStore();
-  const { isDarkMode, toggleTheme } = useThemeStore();
-  const { isListening, isSpeaking, startListening, stopListening, toggleSpeaking } = useSpeechStore();
+  const { t } = useLanguageStore();
+  const { isListening, startListening, stopListening } = useSpeechStore();
   
   const [currentWeather, setCurrentWeather] = useState({
     temperature: 28,
@@ -94,96 +89,8 @@ const HomePage = () => {
     }
   ];
 
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'ta', name: 'தமிழ்', flag: '🇮🇳' },
-    { code: 'te', name: 'తెలుగు', flag: '🇮🇳' },
-    { code: 'hi', name: 'हिंदी', flag: '🇮🇳' }
-  ];
-
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-background text-foreground'}`}>
-      {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-[120rem] mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="text-2xl">🌾</div>
-              <h1 className="text-2xl font-heading font-bold text-primary">Crop Mate</h1>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              {/* Language Selector */}
-              <select 
-                value={currentLanguage} 
-                onChange={(e) => setLanguage(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm"
-              >
-                {languages.map(lang => (
-                  <option key={lang.code} value={lang.code}>
-                    {lang.flag} {lang.name}
-                  </option>
-                ))}
-              </select>
-              
-              {/* Theme Toggle */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={toggleTheme}
-                className="p-2"
-              >
-                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </Button>
-              
-              {/* Speech Toggle */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={toggleSpeaking}
-                className="p-2"
-              >
-                {isSpeaking ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-              </Button>
-              
-              {/* Authentication */}
-              {isAuthenticated ? (
-                <div className="flex items-center space-x-2">
-                  <Link to="/profile">
-                    <Button variant="outline" size="sm">
-                      <User className="h-4 w-4 mr-2" />
-                      {member?.profile?.nickname || member?.contact?.firstName || 'Profile'}
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={actions.logout}
-                  >
-                    Sign Out
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <Link to="/login">
-                    <Button variant="outline" size="sm">
-                      Sign In
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={actions.login}
-                  >
-                    Get Started
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <>
       {/* Hero Section */}
       <section className="min-h-screen flex flex-col justify-center items-center p-8 relative overflow-hidden">
         <motion.div 
@@ -375,72 +282,7 @@ const HomePage = () => {
           </motion.div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-dark-green text-white py-12 px-6">
-        <div className="max-w-[120rem] mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="text-2xl">🌾</div>
-                <h3 className="text-xl font-heading font-bold">Crop Mate</h3>
-              </div>
-              <p className="font-paragraph text-gray-300">
-                {t('footerDescription')}
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="font-heading font-semibold mb-4">{t('features')}</h4>
-              <ul className="space-y-2 font-paragraph text-gray-300">
-                <li>{t('voiceAssistant')}</li>
-                <li>{t('cropGuidance')}</li>
-                <li>{t('pestManagement')}</li>
-                <li>{t('weatherUpdates')}</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-heading font-semibold mb-4">{t('support')}</h4>
-              <ul className="space-y-2 font-paragraph text-gray-300">
-                <li>{t('helpCenter')}</li>
-                <li>{t('tutorials')}</li>
-                <li>{t('contact')}</li>
-                <li>{t('feedback')}</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-heading font-semibold mb-4">{t('languages')}</h4>
-              <div className="grid grid-cols-2 gap-2">
-                {languages.map(lang => (
-                  <button
-                    key={lang.code}
-                    onClick={() => setLanguage(lang.code)}
-                    className={`text-left p-2 rounded transition-colors ${
-                      currentLanguage === lang.code 
-                        ? 'bg-primary text-white' 
-                        : 'text-gray-300 hover:text-white'
-                    }`}
-                  >
-                    {lang.flag} {lang.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-600 mt-8 pt-8 text-center">
-            <p className="font-paragraph text-gray-300">
-              © 2024 Crop Mate. {t('allRightsReserved')}
-            </p>
-          </div>
-        </div>
-      </footer>
-
-      {/* Chatbot */}
-      <Chatbot />
-    </div>
+    </>
   );
 };
 

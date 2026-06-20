@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, TrendingUp, TrendingDown, BarChart3, MapPin, Calendar } from 'lucide-react';
+import { TrendingUp, TrendingDown, BarChart3, MapPin, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useLanguageStore } from '@/stores/languageStore';
 import { useThemeStore } from '@/stores/themeStore';
+import { MemoizedPageHeader as PageHeader } from '@/components/ui/page-header';
 
 interface MarketData {
   crop: string;
@@ -32,6 +32,7 @@ const MarketPage = () => {
   const [insights, setInsights] = useState<MarketInsight[]>([]);
   const [selectedCrop, setSelectedCrop] = useState<MarketData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const { t } = useLanguageStore();
   const { isDarkMode } = useThemeStore();
@@ -173,6 +174,9 @@ const MarketPage = () => {
 
       setLoading(false);
     }, 1000);
+
+    // Simulated error handling if fetching fails
+    // In a real scenario, this would be inside a try-catch block
   }, []);
 
   const getTrendIcon = (trend: string) => {
@@ -221,18 +225,30 @@ const MarketPage = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-background'}`}>
+        <div className="text-center max-w-md px-6">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-heading font-bold mb-2">{t('error')}</h2>
+          <p className="font-paragraph text-gray-600 dark:text-gray-300 mb-6">{error}</p>
+          <Button onClick={() => window.location.reload()}>
+            {t('retry')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (selectedCrop) {
     return (
       <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-background text-foreground'}`}>
         <div className="max-w-[120rem] mx-auto px-6 py-8">
-          <Button
-            variant="outline"
-            onClick={() => setSelectedCrop(null)}
-            className="mb-6"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('back')}
-          </Button>
+          <PageHeader
+            title={`${selectedCrop.crop} Market Analysis`}
+            onBack={() => setSelectedCrop(null)}
+            icon="📈"
+          />
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
@@ -370,23 +386,11 @@ const MarketPage = () => {
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-background text-foreground'}`}>
       <div className="max-w-[120rem] mx-auto px-6 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <Link to="/">
-              <Button variant="outline" className="mb-4">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('home')}
-              </Button>
-            </Link>
-            <h1 className="text-4xl font-heading font-bold text-primary">
-              {t('market')}
-            </h1>
-            <p className="font-paragraph text-gray-600 dark:text-gray-300 mt-2">
-              {t('marketDescription')}
-            </p>
-          </div>
-          <div className="text-6xl">📈</div>
-        </div>
+        <PageHeader
+          title={t('market')}
+          description={t('marketDescription')}
+          icon="📈"
+        />
 
         {/* Market Overview */}
         <motion.div
@@ -444,6 +448,15 @@ const MarketPage = () => {
           className="mb-8"
         >
           <h2 className="text-2xl font-heading font-semibold mb-6">Crop Prices</h2>
+          {marketData.length === 0 ? (
+            <Card className="p-12 text-center">
+              <div className="text-6xl mb-4">📉</div>
+              <h3 className="text-xl font-heading font-semibold mb-2">No Market Data Available</h3>
+              <p className="font-paragraph text-gray-600 dark:text-gray-300">
+                Check back later for the latest agricultural market updates.
+              </p>
+            </Card>
+          ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {marketData.map((crop, index) => (
               <motion.div
@@ -506,6 +519,7 @@ const MarketPage = () => {
               </motion.div>
             ))}
           </div>
+          )}
         </motion.div>
 
         {/* Market Insights */}

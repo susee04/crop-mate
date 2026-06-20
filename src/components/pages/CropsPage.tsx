@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, ArrowLeft } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Image } from '@/components/ui/image';
-import { Link } from 'react-router-dom';
 import { BaseCrudService } from '@/integrations';
 import { Crops } from '@/entities';
 import { useLanguageStore } from '@/stores/languageStore';
 import { useThemeStore } from '@/stores/themeStore';
+import { MemoizedPageHeader as PageHeader } from '@/components/ui/page-header';
 
 const CropsPage = () => {
   const [crops, setCrops] = useState<Crops[]>([]);
@@ -64,14 +64,11 @@ const CropsPage = () => {
     return (
       <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-background text-foreground'}`}>
         <div className="max-w-[120rem] mx-auto px-6 py-8">
-          <Button
-            variant="outline"
-            onClick={() => setSelectedCrop(null)}
-            className="mb-6"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('back')}
-          </Button>
+          <PageHeader
+            title={selectedCrop.cropName || ''}
+            onBack={() => setSelectedCrop(null)}
+            icon="🌾"
+          />
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
@@ -143,23 +140,11 @@ const CropsPage = () => {
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-background text-foreground'}`}>
       <div className="max-w-[120rem] mx-auto px-6 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <Link to="/">
-              <Button variant="outline" className="mb-4">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('home')}
-              </Button>
-            </Link>
-            <h1 className="text-4xl font-heading font-bold text-primary">
-              {t('crops')}
-            </h1>
-            <p className="font-paragraph text-gray-600 dark:text-gray-300 mt-2">
-              {t('cropDescription')}
-            </p>
-          </div>
-          <div className="text-6xl">🌾</div>
-        </div>
+        <PageHeader
+          title={t('crops')}
+          description={t('cropDescription')}
+          icon="🌾"
+        />
 
         {/* Search and Filter */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">

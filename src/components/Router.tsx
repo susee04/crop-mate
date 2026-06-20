@@ -15,13 +15,14 @@ import PesticidesPage from '@/components/pages/PesticidesPage';
 import WaterPage from '@/components/pages/WaterPage';
 import DiseaseDetectionPage from '@/components/pages/DiseaseDetectionPage';
 import ProfilePage from '@/components/pages/ProfilePage';
+import { MainLayout } from '@/components/layout/MainLayout';
 
 // Layout component that includes ScrollToTop
 function Layout() {
   return (
     <>
       <ScrollToTop />
-      <Outlet />
+      <MainLayout />
     </>
   );
 }

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin, Thermometer, Droplets, Wind, Eye, Gauge, Sunrise, Sunset, CloudRain } from 'lucide-react';
+import { MapPin, Thermometer, Droplets, Wind, Eye, Gauge, Sunrise, Sunset, CloudRain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
 import { useLanguageStore } from '@/stores/languageStore';
 import { useThemeStore } from '@/stores/themeStore';
+import { MemoizedPageHeader as PageHeader } from '@/components/ui/page-header';
 
 interface WeatherData {
   location: string;
@@ -91,23 +91,11 @@ const WeatherPage = () => {
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-background text-foreground'}`}>
       <div className="max-w-[120rem] mx-auto px-6 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <Link to="/">
-              <Button variant="outline" className="mb-4">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('home')}
-              </Button>
-            </Link>
-            <h1 className="text-4xl font-heading font-bold text-primary">
-              {t('weather')}
-            </h1>
-            <p className="font-paragraph text-gray-600 dark:text-gray-300 mt-2">
-              {t('weatherDescription')}
-            </p>
-          </div>
-          <div className="text-6xl">🌤️</div>
-        </div>
+        <PageHeader
+          title={t('weather')}
+          description={t('weatherDescription')}
+          icon="🌤️"
+        />
 
         {/* Current Weather */}
         <motion.div

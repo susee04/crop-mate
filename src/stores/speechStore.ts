@@ -1,12 +1,6 @@
 import { create } from 'zustand';
 import { useLanguageStore } from './languageStore';
-
-const languageMap: Record<string, string> = {
-  en: 'en-US',
-  ta: 'ta-IN',
-  te: 'te-IN',
-  hi: 'hi-IN',
-};
+import { BCP47_MAP } from '@/lib/constants';
 
 interface SpeechStore {
   isListening: boolean;
@@ -33,7 +27,7 @@ export const useSpeechStore = create<SpeechStore>((set, get) => ({
       recognition.interimResults = true;
 
       const currentLanguage = useLanguageStore.getState().currentLanguage;
-      recognition.lang = languageMap[currentLanguage] || 'en-US';
+      recognition.lang = BCP47_MAP[currentLanguage] || 'en-US';
       
       recognition.onstart = () => {
         set({ isListening: true });
@@ -81,7 +75,7 @@ export const useSpeechStore = create<SpeechStore>((set, get) => ({
       utterance.volume = 1;
       
       const currentLanguage = useLanguageStore.getState().currentLanguage;
-      utterance.lang = languageMap[currentLanguage] || 'en-US';
+      utterance.lang = BCP47_MAP[currentLanguage] || 'en-US';
       
       speechSynthesis.speak(utterance);
     }
